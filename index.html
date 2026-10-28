@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#09070a">
+  <title>Homa — история одной тыквы</title>
+  <link rel="stylesheet" href="./static/style.css">
+  <script type="importmap">
+    {"imports":{
+      "three":"https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js",
+      "three/addons/":"https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/"
+    }}
+  </script>
+</head>
+<body>
+  <div class="atmosphere"></div>
+  <div id="scene" aria-hidden="true"></div>
+  <div class="veil"></div>
+  <div class="grain"></div>
+
+  <header>
+    <div class="logo"><span class="logo-mark"></span> Homa</div>
+    <span class="top-note">Интерактивная история о тыкве / 2026</span>
+    <span class="chapter-counter"><strong id="currentChapter">01</strong> / 05</span>
+  </header>
+
+    
+  <div class="stories">
+
+    <!-- ГЛАВА 01 — ПРОБУЖДЕНИЕ -->
+    <section class="story left is-active" aria-label="Глава 1">
+      <div class="copy">
+        <p class="eyebrow">Глава 01 — пробуждение</p>
+
+        <h1>
+          <span class="line">Когда октябрь</span>
+          <span class="line"><em>засыпает...</em></span>
+        </h1>
+
+        <p class="desc">
+          Говорят, в последнюю ночь октября все огни
+          возвращаются к звёздам. Но один из них
+          всегда остаётся на земле.
+        </p>
+
+        <button class="action" data-next="1">
+          <span>Разбудить историю</span>
+          <span class="circle">↓</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ГЛАВА 02 — ШЁПОТ -->
+    <section class="story right" aria-label="Глава 2">
+      <div class="copy">
+        <p class="eyebrow">Глава 02 — шёпот</p>
+
+        <h2>
+          <span class="line">У каждого света</span>
+          <span class="line">есть <em>тайна.</em></span>
+        </h2>
+
+        <p class="desc">
+          Она слышала тысячи желаний.
+          Видела сотни осеней.
+          И бережно хранила то,
+          что люди давно забыли.
+        </p>
+      </div>
+    </section>
+
+    <!-- ГЛАВА 03 — ТРЕЩИНА -->
+    <section class="story left" aria-label="Глава 3">
+      <div class="copy">
+        <p class="eyebrow">Глава 03 — трещина</p>
+
+        <h2>
+          <span class="line">Даже вечность</span>
+          <span class="line">не хранит</span>
+          <span class="line"><em>секреты.</em></span>
+        </h2>
+
+        <p class="desc">
+          С каждым годом её сердце сияло всё ярче.
+          Пока однажды даже самая крепкая
+          оболочка не выдержала.
+        </p>
+      </div>
+    </section>
+
+    <!-- ГЛАВА 04 — ОСВОБОЖДЕНИЕ -->
+    <section class="story right" aria-label="Глава 4">
+      <div class="copy">
+        <p class="eyebrow">Глава 04 — освобождение</p>
+
+        <h2>
+          <span class="line">Иногда нужно</span>
+          <span class="line"><em>раскрыться,</em></span>
+          <span class="line">чтобы сиять.</span>
+        </h2>
+
+        <p class="desc">
+          И когда пришла самая тёмная ночь,
+          она впервые открыла своё сердце миру.
+          Свет больше не мог оставаться взаперти.
+        </p>
+      </div>
+    </section>
+
+    <!-- ГЛАВА 05 — СЕРДЦЕ ОКТЯБРЯ -->
+    <section class="story left" aria-label="Глава 5">
+      <div class="copy">
+        <p class="eyebrow">Глава 05 — сердце октября</p>
+
+        <h2>
+          <span class="line">Свет никогда</span>
+          <span class="line"><em>не исчезает.</em></span>
+        </h2>
+
+        <p class="desc">
+          Он лишь ждёт того, кто осмелится
+          выпустить его наружу.
+          Каждый конец — лишь начало новой магии.
+        </p>
+
+        <button class="action" data-next="0">
+          <span>Прожить историю снова</span>
+          <span class="circle">↑</span>
+        </button>
+      </div>
+    </section>
+
+  </div>
+
+
+  <nav class="side-index" aria-label="Перейти к главе">
+    <button class="selected" data-next="0" aria-label="Глава 1"></button>
+    <button data-next="1" aria-label="Глава 2"></button>
+    <button data-next="2" aria-label="Глава 3"></button>
+    <button data-next="3" aria-label="Глава 4"></button>
+    <button data-next="4" aria-label="Глава 5"></button>
+  </nav>
+  <footer class="bottom">
+    <div class="scroll-hint"><span class="scroll-mouse"></span> Листай вниз</div>
+    <div class="bottom-right">Scroll to transform<div class="progress"><div id="progressBar"></div></div></div>
+  </footer>
+
+  <main id="scroll-track" aria-label="Прокручиваемая история">
+    <div class="scroll-step"></div><div class="scroll-step"></div><div class="scroll-step"></div>
+    <div class="scroll-step"></div><div class="scroll-step"></div>
+  </main>
+  <noscript><p class="noscript">Для 3D-анимации включи JavaScript.</p></noscript>
+
+  <script type="module" src="./static/script.js"></script>
+</body>
+</html>

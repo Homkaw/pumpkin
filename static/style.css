@@ -1,0 +1,1229 @@
+
+/* ==========================================
+   HEART OF OCTOBER
+   3D INTERACTIVE STORY
+   Design by Homa
+========================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;1,500&display=swap');
+
+/* ==========================================
+   01. ПЕРЕМЕННЫЕ
+========================================== */
+
+:root {
+  --bg: #09070a;
+  --bg-soft: #140c10;
+
+  --cream: #fff0df;
+  --white: #fff8f0;
+  --muted: #c7b6aa;
+
+  --accent: #ff8c41;
+  --accent-light: #ffc58f;
+  --accent-soft: #f5a36d;
+
+  --line: rgba(255, 255, 255, 0.09);
+
+  --font-main: 'Manrope', sans-serif;
+  --font-title: 'Playfair Display', Georgia, serif;
+
+  --page-padding: clamp(24px, 5vw, 88px);
+
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ==========================================
+   02. ОБЩИЕ СТИЛИ
+========================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-snap-type: y mandatory;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+
+  background: var(--bg);
+  color: var(--cream);
+
+  font-family: var(--font-main);
+
+  overflow-x: hidden;
+}
+
+button {
+  font: inherit;
+}
+
+button:focus-visible {
+  outline: 2px solid var(--accent-light);
+  outline-offset: 5px;
+}
+
+::selection {
+  background: var(--accent);
+  color: #100809;
+}
+
+/* ==========================================
+   03. АТМОСФЕРА САЙТА
+========================================== */
+
+.atmosphere {
+  position: fixed;
+  inset: 0;
+
+  z-index: 0;
+  pointer-events: none;
+
+  background:
+    radial-gradient(
+      ellipse 44% 55% at 50% 50%,
+      rgba(109, 44, 28, 0.28),
+      transparent 76%
+    ),
+    radial-gradient(
+      ellipse 55% 60% at 80% 15%,
+      rgba(61, 32, 50, 0.22),
+      transparent 80%
+    ),
+    linear-gradient(
+      115deg,
+      #0a080b,
+      #140c10 55%,
+      #070609
+    );
+}
+
+/* ==========================================
+   04. THREE.JS CANVAS
+========================================== */
+
+#scene {
+  position: fixed;
+  inset: 0;
+
+  z-index: 1;
+
+  width: 100%;
+  height: 100%;
+
+  overflow: hidden;
+  pointer-events: none;
+}
+
+#scene canvas {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+}
+
+/* ==========================================
+   05. ТЕНЕВАЯ МАСКА
+========================================== */
+
+.veil {
+  position: fixed;
+  inset: 0;
+
+  z-index: 2;
+  pointer-events: none;
+
+  background: linear-gradient(
+    90deg,
+    rgba(9, 7, 10, 0.84),
+    transparent 36%,
+    transparent 66%,
+    rgba(9, 7, 10, 0.70)
+  );
+}
+
+/* ==========================================
+   06. ЗЕРНИСТОСТЬ
+========================================== */
+
+.grain {
+  position: fixed;
+  inset: 0;
+
+  z-index: 3;
+  pointer-events: none;
+
+  opacity: 0.16;
+
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.28'/%3E%3C/svg%3E");
+}
+
+/* ==========================================
+   07. HEADER
+========================================== */
+
+header {
+  position: fixed;
+
+  top: 0;
+  left: 0;
+  right: 0;
+
+  z-index: 10;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 29px var(--page-padding);
+
+  border-bottom: 1px solid var(--line);
+
+  background: linear-gradient(
+    to bottom,
+    rgba(9, 7, 10, 0.50),
+    transparent
+  );
+}
+
+/* Логотип */
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+
+  color: var(--white);
+
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+}
+
+.logo-mark {
+  width: 21px;
+  height: 21px;
+
+  border: 1px solid #efaa76;
+
+  border-radius: 50% 50% 8% 50%;
+
+  transform: rotate(-40deg);
+
+  box-shadow:
+    0 0 22px rgba(255, 137, 51, 0.4),
+    inset 0 0 10px rgba(255, 137, 51, 0.24);
+}
+
+/* Описание в шапке */
+
+.top-note {
+  color: #ac9790;
+
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+}
+
+/* Счётчик глав */
+
+.chapter-counter {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+
+  color: #efaa76;
+
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+}
+
+.chapter-counter strong {
+  font-size: 17px;
+  color: var(--cream);
+}
+
+/* ==========================================
+   08. ПРОКРУТКА ИСТОРИИ
+========================================== */
+
+#scroll-track {
+  position: relative;
+  z-index: 0;
+}
+
+.scroll-step {
+  height: 100svh;
+
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+/* ==========================================
+   09. КОНТЕЙНЕР ГЛАВ
+========================================== */
+
+.stories {
+  position: fixed;
+  inset: 0;
+
+  z-index: 5;
+
+  pointer-events: none;
+}
+
+.story {
+  position: absolute;
+  inset: 0;
+
+  display: flex;
+  align-items: center;
+
+  padding:
+    10vh
+    clamp(24px, 7.2vw, 120px);
+
+  opacity: 0;
+  visibility: hidden;
+
+  transform: translateY(32px);
+
+  pointer-events: none;
+
+  will-change: transform, opacity;
+}
+
+.story.is-active {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+}
+
+/* Текст слева */
+
+.story.left {
+  justify-content: flex-start;
+}
+
+/* Текст справа */
+
+.story.right {
+  justify-content: flex-end;
+}
+
+.story .copy {
+  width: 100%;
+  max-width: min(420px, 34vw);
+
+  min-width: 0;
+
+  pointer-events: auto;
+}
+
+/* ==========================================
+   10. ТЕКСТ ГЛАВ
+========================================== */
+
+/* Маленькая подпись главы */
+
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  margin: 0 0 25px;
+
+  color: #f1a66c;
+
+  font-size: 10px;
+  font-weight: 700;
+
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+}
+
+.eyebrow::before {
+  content: "";
+
+  display: block;
+
+  width: 31px;
+  height: 1px;
+
+  flex-shrink: 0;
+
+  background: currentColor;
+}
+
+/* Заголовки */
+
+.story h1,
+.story h2 {
+  margin: 0;
+
+  font-family: var(--font-title);
+
+  font-size: clamp(45px, 5.5vw, 90px);
+  font-weight: 500;
+
+  line-height: 1.03;
+  letter-spacing: -0.055em;
+
+  color: var(--white);
+}
+
+/* Строки заголовков */
+
+.story .line {
+  display: block;
+
+  overflow-wrap: anywhere;
+}
+
+/* Оранжевые акценты */
+
+.story .copy em {
+  color: var(--accent-soft);
+
+  font-weight: 500;
+  font-style: italic;
+
+  text-shadow:
+    0 0 40px rgba(255, 140, 65, 0.13);
+}
+
+/* Описание истории */
+
+.story .desc {
+  max-width: 350px;
+
+  margin: 27px 0 0;
+
+  color: #c2b1a9;
+
+  font-size: clamp(13px, 1.12vw, 16px);
+  font-weight: 400;
+
+  line-height: 1.9;
+
+  text-wrap: pretty;
+}
+
+/* ==========================================
+   11. КНОПКА ПРОДОЛЖЕНИЯ
+========================================== */
+
+.story .action {
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+
+  margin-top: 34px;
+  padding: 12px 0;
+
+  border: none;
+  background: transparent;
+
+  color: #ffca9d;
+
+  font-size: 10px;
+  font-weight: 600;
+
+  letter-spacing: 0.17em;
+  text-transform: uppercase;
+
+  cursor: pointer;
+  pointer-events: auto;
+
+  transition: color 0.3s ease;
+}
+
+.story .action:hover {
+  color: var(--white);
+}
+
+.action .circle {
+  display: grid;
+  place-items: center;
+
+  width: 36px;
+  height: 36px;
+
+  border: 1px solid rgba(255, 195, 139, 0.49);
+  border-radius: 50%;
+
+  font-size: 16px;
+
+  transition:
+    transform 0.35s var(--ease),
+    background 0.35s ease,
+    box-shadow 0.35s ease;
+}
+
+.action:hover .circle {
+  background: rgba(255, 140, 65, 0.20);
+
+  transform: translateY(5px);
+
+  box-shadow:
+    0 0 24px rgba(255, 140, 65, 0.17);
+}
+
+/* ==========================================
+   12. НАВИГАЦИЯ ПО ГЛАВАМ
+========================================== */
+
+.side-index {
+  position: fixed;
+
+  top: 50%;
+  right: clamp(12px, 3vw, 52px);
+
+  z-index: 8;
+
+  transform: translateY(-50%);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  gap: 4px;
+}
+
+/* Кнопки делаем удобными для нажатия */
+
+.side-index button {
+  position: relative;
+
+  display: grid;
+  place-items: center;
+
+  width: 30px;
+  height: 32px;
+
+  padding: 0;
+
+  border: 0;
+  background: transparent;
+
+  cursor: pointer;
+}
+
+/* Видимая полоска */
+
+.side-index button::before {
+  content: "";
+
+  display: block;
+
+  width: 4px;
+  height: 17px;
+
+  border-radius: 5px;
+
+  background: rgba(156, 137, 130, 0.50);
+
+  transition:
+    height 0.35s var(--ease),
+    background 0.35s ease,
+    box-shadow 0.35s ease;
+}
+
+/* Активная глава */
+
+.side-index button.selected::before {
+  height: 29px;
+
+  background: #ff9b56;
+
+  box-shadow:
+    0 0 17px rgba(255, 115, 44, 0.44);
+}
+
+.side-index button:hover::before {
+  background: var(--accent-light);
+}
+
+/* ==========================================
+   13. НИЖНЯЯ ПАНЕЛЬ
+========================================== */
+
+.bottom {
+  position: fixed;
+
+  left: var(--page-padding);
+  right: var(--page-padding);
+  bottom: 34px;
+
+  z-index: 8;
+
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+
+  gap: 16px;
+
+  color: #99867e;
+
+  pointer-events: none;
+}
+
+/* Подсказка скролла */
+
+.scroll-hint {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+
+  font-size: 9px;
+
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+}
+
+.scroll-mouse {
+  display: flex;
+  justify-content: center;
+
+  width: 21px;
+  height: 32px;
+
+  padding-top: 6px;
+
+  border: 1px solid #b7a098;
+  border-radius: 13px;
+}
+
+.scroll-mouse::before {
+  content: "";
+
+  width: 2px;
+  height: 7px;
+
+  border-radius: 3px;
+
+  background: #ffc59a;
+
+  animation: wheel 1.7s infinite;
+}
+
+@keyframes wheel {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(9px);
+    opacity: 0;
+  }
+}
+
+/* Правая подпись */
+
+.bottom-right {
+  text-align: right;
+
+  font-size: 9px;
+
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+/* Прогресс истории */
+
+.progress {
+  position: relative;
+
+  width: 125px;
+  height: 1px;
+
+  margin-top: 10px;
+
+  background: rgba(255, 255, 255, 0.20);
+}
+
+.progress > div {
+  position: absolute;
+
+  top: 0;
+  bottom: 0;
+  left: 0;
+
+  width: 0;
+
+  background: #ffaf72;
+
+  box-shadow:
+    0 0 12px rgba(255, 145, 65, 0.55);
+}
+
+/* ==========================================
+   14. ОШИБКА JAVASCRIPT
+========================================== */
+
+.noscript {
+  position: fixed;
+
+  bottom: 100px;
+  left: 20px;
+
+  z-index: 50;
+
+  color: #ffe0c0;
+}
+
+/* ==========================================
+   15. НОУТБУКИ И НЕБОЛЬШИЕ ЭКРАНЫ
+========================================== */
+
+@media (min-width: 801px) and (max-width: 1180px) {
+
+  .story {
+    padding-inline: 5vw;
+  }
+
+  .story .copy {
+    max-width: 36vw;
+  }
+
+  .story h1,
+  .story h2 {
+    font-size: clamp(44px, 5.3vw, 72px);
+  }
+
+  .story .desc {
+    font-size: 14px;
+    line-height: 1.75;
+  }
+
+  .side-index {
+    right: 13px;
+  }
+
+}
+
+/* ==========================================
+   16. ПЛАНШЕТЫ И ТЕЛЕФОНЫ
+========================================== */
+
+@media (max-width: 800px) {
+
+  :root {
+    --page-padding: 22px;
+  }
+
+  /* HEADER */
+
+  header {
+    padding:
+      calc(17px + env(safe-area-inset-top))
+      22px
+      16px;
+  }
+
+  .logo {
+    font-size: 12px;
+    letter-spacing: 0.18em;
+  }
+
+  .logo-mark {
+    width: 18px;
+    height: 18px;
+  }
+
+  .top-note {
+    display: none;
+  }
+
+  .chapter-counter {
+    font-size: 10px;
+  }
+
+  .chapter-counter strong {
+    font-size: 15px;
+  }
+
+  /* Затемнение за текстом */
+
+  .veil {
+    background: linear-gradient(
+      to bottom,
+      rgba(9, 7, 10, 0.45) 0%,
+      transparent 18%,
+      transparent 40%,
+      rgba(9, 7, 10, 0.78) 62%,
+      rgba(9, 7, 10, 0.98) 100%
+    );
+  }
+
+  /* Положение текста */
+
+  .story,
+  .story.left,
+  .story.right {
+    align-items: flex-end;
+    justify-content: flex-start;
+
+    padding:
+      calc(72px + env(safe-area-inset-top))
+      43px
+      calc(74px + env(safe-area-inset-bottom))
+      22px;
+  }
+
+  .story .copy {
+    width: 100%;
+    max-width: 450px;
+
+    max-height: 46svh;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    padding: 6px 4px 4px 0;
+
+    scrollbar-width: thin;
+    scrollbar-color: #8b563f transparent;
+
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      #000 93%,
+      transparent 100%
+    );
+
+    mask-image: linear-gradient(
+      to bottom,
+      #000 93%,
+      transparent 100%
+    );
+  }
+
+  .story:not(.is-active) .copy {
+    pointer-events: none;
+  }
+
+  .story.is-active .copy {
+    pointer-events: auto;
+  }
+
+  /* Заголовки */
+
+  .story h1,
+  .story h2 {
+    font-size: clamp(32px, 8.4vw, 57px);
+
+    line-height: 1.05;
+    letter-spacing: -0.047em;
+  }
+
+  .story .line {
+    max-width: 16ch;
+  }
+
+  /* Подпись главы */
+
+  .eyebrow {
+    font-size: 9px;
+
+    letter-spacing: 0.18em;
+
+    margin: 0 0 12px;
+  }
+
+  .eyebrow::before {
+    width: 23px;
+  }
+
+  /* Описание */
+
+  .story .desc {
+    max-width: 36ch;
+
+    margin-top: 12px;
+
+    font-size: clamp(12px, 3.2vw, 14px);
+    line-height: 1.6;
+  }
+
+  /* Кнопки */
+
+  .story .action {
+    margin-top: 11px;
+    padding: 8px 0;
+
+    gap: 10px;
+
+    font-size: 10px;
+  }
+
+  .action .circle {
+    width: 32px;
+    height: 32px;
+  }
+
+  /* Навигация справа */
+
+  .side-index {
+    top: 36%;
+    right: 6px;
+
+    gap: 3px;
+  }
+
+  .side-index button {
+    width: 28px;
+    height: 29px;
+  }
+
+  .side-index button::before {
+    width: 4px;
+    height: 14px;
+  }
+
+  .side-index button.selected::before {
+    height: 25px;
+  }
+
+  /* Нижний блок */
+
+  .bottom {
+    left: 22px;
+    right: 22px;
+
+    bottom: calc(
+      17px + env(safe-area-inset-bottom)
+    );
+  }
+
+  .scroll-mouse {
+    width: 17px;
+    height: 26px;
+  }
+
+  .scroll-hint {
+    gap: 8px;
+    font-size: 8px;
+  }
+
+  .bottom-right {
+    font-size: 8px;
+  }
+
+  .progress {
+    width: 78px;
+  }
+
+}
+
+/* ==========================================
+   17. МАЛЕНЬКИЕ ТЕЛЕФОНЫ
+========================================== */
+
+@media (max-width: 400px) {
+
+  .story,
+  .story.left,
+  .story.right {
+    padding-right: 35px;
+  }
+
+  .story h1,
+  .story h2 {
+    font-size: clamp(30px, 8.7vw, 39px);
+  }
+
+  .story .desc {
+    font-size: 12px;
+    line-height: 1.55;
+  }
+
+  .side-index {
+    right: 3px;
+  }
+
+  .bottom-right {
+    letter-spacing: 0.10em;
+  }
+
+}
+
+/* ==========================================
+   18. НЕВЫСОКИЕ ТЕЛЕФОНЫ
+========================================== */
+
+@media (max-width: 800px) and (max-height: 700px) {
+
+  .story,
+  .story.left,
+  .story.right {
+    padding-bottom: calc(
+      55px + env(safe-area-inset-bottom)
+    );
+  }
+
+  .story .copy {
+    max-height: 46svh;
+  }
+
+  .story h1,
+  .story h2 {
+    font-size: clamp(29px, 7.4vw, 42px);
+  }
+
+  .eyebrow {
+    margin-bottom: 7px;
+  }
+
+  .story .desc {
+    margin-top: 8px;
+  }
+
+  .bottom {
+    bottom: calc(
+      12px + env(safe-area-inset-bottom)
+    );
+  }
+
+}
+
+/* ==========================================
+   19. АЛЬБОМНАЯ ОРИЕНТАЦИЯ
+========================================== */
+
+@media (max-height: 540px) and (orientation: landscape) {
+
+  .story,
+  .story.left,
+  .story.right {
+    align-items: center;
+    justify-content: flex-start;
+
+    padding: 65px 45px 35px 5vw;
+  }
+
+  .story .copy {
+    max-width: min(42vw, 410px);
+    max-height: 72vh;
+  }
+
+  .story h1,
+  .story h2 {
+    font-size: clamp(27px, 4.7vw, 49px);
+  }
+
+  .story .desc {
+    font-size: 11px;
+    line-height: 1.5;
+  }
+
+  .eyebrow {
+    margin-bottom: 7px;
+  }
+
+  .veil {
+    background: linear-gradient(
+      90deg,
+      rgba(9, 7, 10, 0.98) 0%,
+      rgba(9, 7, 10, 0.84) 35%,
+      transparent 78%
+    );
+  }
+
+  .bottom {
+    bottom: 12px;
+  }
+
+}
+
+/* ==========================================
+   20. ОТКЛЮЧЕНИЕ ЛИШНИХ АНИМАЦИЙ
+========================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+}
+
+
+
+
+/* ==========================================
+   ИСПРАВЛЕНИЕ ТЕКСТА НА ВСЕХ ЭКРАНАХ
+========================================== */
+
+/* Достаточная ширина текстового блока */
+
+.story .copy {
+  width: min(41vw, 640px);
+  max-width: none;
+  min-width: 0;
+}
+
+/* Исправляем слишком крупные заголовки */
+
+.story h1,
+.story h2 {
+  font-size: clamp(34px, 3.2vw, 64px);
+  line-height: 1.10;
+  letter-spacing: -0.04em;
+}
+
+/* Запрещаем переносы внутри заданных строк */
+
+.story .line {
+  display: block;
+  max-width: none;
+
+  white-space: nowrap;
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: none;
+}
+
+/* Описания переносятся только между словами */
+
+.story .desc {
+  max-width: 42ch;
+
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: none;
+
+  line-height: 1.75;
+}
+
+/* Равномерные отступы слева и справа */
+
+.story.left .copy {
+  margin-right: auto;
+  margin-left: 0;
+}
+
+.story.right .copy {
+  margin-left: auto;
+  margin-right: 0;
+}
+
+/* ==========================================
+   НОУТБУКИ
+========================================== */
+
+@media (min-width: 801px) and (max-width: 1100px) {
+  .story .copy {
+    width: min(39vw, 430px);
+  }
+
+  .story h1,
+  .story h2 {
+    font-size: clamp(29px, 3vw, 38px);
+  }
+}
+
+/* ==========================================
+   ТЕЛЕФОНЫ И ПЛАНШЕТЫ
+========================================== */
+
+@media (max-width: 800px) {
+  .story .copy {
+    width: 100%;
+    max-width: 460px;
+    min-width: 0;
+  }
+
+  .story h1,
+  .story h2 {
+    font-size: clamp(25px, 6.5vw, 42px);
+    line-height: 1.09;
+    letter-spacing: -0.045em;
+  }
+
+  .story .line {
+    max-width: none;
+    white-space: nowrap;
+  }
+
+  .story .desc {
+    max-width: 38ch;
+    font-size: clamp(12px, 3.1vw, 14px);
+    line-height: 1.6;
+  }
+
+  .story.left .copy,
+  .story.right .copy {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
+/* Очень узкие экраны */
+
+@media (max-width: 360px) {
+  .story,
+  .story.left,
+  .story.right {
+    padding-left: 16px;
+    padding-right: 34px;
+  }
+
+  .story h1,
+  .story h2 {
+    font-size: 24px;
+  }
+}
+
+/* Низкие мобильные экраны */
+
+@media (max-width: 800px) and (max-height: 700px) {
+  .story h1,
+  .story h2 {
+    font-size: clamp(23px, 6.1vw, 34px);
+  }
+}
+
+
+
+/* ==========================================
+   КОМПОЗИЦИЯ ГЛАВ 02 И 04
+========================================== */
+
+@media (min-width: 1101px) {
+
+  .story:nth-child(2) .copy,
+  .story:nth-child(4) .copy {
+    width: min(36vw, 620px);
+    max-width: 620px;
+
+    margin-left: auto;
+    margin-right: 0;
+
+    position: relative;
+    z-index: 2;
+  }
+
+  .story:nth-child(2) h2,
+  .story:nth-child(4) h2 {
+    font-size: clamp(38px, 3.05vw, 62px);
+    line-height: 1.08;
+  }
+
+  .story:nth-child(2) .desc,
+  .story:nth-child(4) .desc {
+    max-width: 45ch;
+    line-height: 1.8;
+  }
+}
